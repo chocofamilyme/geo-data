@@ -4,7 +4,7 @@ namespace Chocofamily\GeoData\Providers;
 
 use Chocofamily\GeoData\DTO\GeoDTO;
 
-class Sypex extends AbstractGeoProvider
+class SypexGeo extends AbstractGeoProvider
 {
     /**
      * @return string

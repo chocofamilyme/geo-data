@@ -7,22 +7,15 @@
 namespace Chocofamily\GeoData;
 
 use Chocofamily\GeoData\Config\Options;
+use Chocofamily\GeoData\DTO\GeoDTO;
 use Chocofamily\GeoData\Providers\GeoProviderInterface;
-use Chocofamily\GeoData\Providers\Ip;
-use Chocofamily\GeoData\Providers\Sypex;
+use Chocofamily\GeoData\Providers\IpApi;
+use Chocofamily\GeoData\Providers\SypexGeo;
 use Phalcon\Cache\BackendInterface;
 use Phalcon\Config;
 
 class GeoDataService
 {
-    const PARAMETERS = [
-        'country',
-        'city',
-        'region',
-        'lat',
-        'lon',
-    ];
-
     /** @var BackendInterface */
     private $cache;
 
@@ -30,8 +23,8 @@ class GeoDataService
     private $config;
 
     private $geoClasses = [
-        Ip::class,
-        Sypex::class,
+        IpApi::class,
+        SypexGeo::class,
     ];
 
     public function __construct(Config $config, BackendInterface $cache)
@@ -45,30 +38,28 @@ class GeoDataService
      *
      * @param array  $showOnly
      *
-     * @return array
+     * @return GeoDTO|null
      */
-    public function getGeoData(string $ip, $showOnly = self::PARAMETERS): array
+    public function getGeoDTO(string $ip): ?GeoDTO
     {
         $key = $this->getCacheKey($ip);
         if ($geoData = $this->cache->get($key)) {
-            return $geoData;
+            return unserialize($geoData);
         }
 
         foreach ($this->geoClasses as $geoClass) {
-            /** @var GeoProviderInterface $geoApi */
-            $geoApi = new $geoClass($ip);
+            /** @var GeoProviderInterface $geoProvider */
+            $geoProvider = new $geoClass($ip);
 
-            if ($geoApi->isAvailable()) {
-                $geoData = $geoApi->getData()->toArray();
-                $geoData = $this->filter($geoData, $showOnly);
-
-                $this->cache->save($key, $geoData, $this->getCacheTime());
+            if ($geoProvider->isAvailable()) {
+                $geoData = $geoProvider->getData();
+                $this->cache->save($key, serialize($geoData), $this->getCacheTime());
 
                 return $geoData;
             }
         }
 
-        return [];
+        return null;
     }
 
     /**

@@ -2,8 +2,8 @@
 
 namespace unit;
 
-use Chocofamily\GeoData\Providers\Ip;
-use Chocofamily\GeoData\Providers\Sypex;
+use Chocofamily\GeoData\Providers\IpApi;
+use Chocofamily\GeoData\Providers\SypexGeo;
 
 class GeoProviderCest
 {
@@ -34,11 +34,11 @@ class GeoProviderCest
         return [
             [
                 'message' => 'Получить гео данные с IpApi',
-                'className' => Ip::class,
+                'className' => IpApi::class,
             ],
             [
-                'message' => 'Получить гео данные с SypexGeoApi',
-                'className' => Sypex::class,
+                'message' => 'Получить гео данные с SypexGeo',
+                'className' => SypexGeo::class,
             ],
         ];
     }

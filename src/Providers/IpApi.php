@@ -8,7 +8,7 @@ namespace Chocofamily\GeoData\Providers;
 
 use Chocofamily\GeoData\DTO\GeoDTO;
 
-class Ip extends AbstractGeoProvider
+class IpApi extends AbstractGeoProvider
 {
     /**
      * @return string

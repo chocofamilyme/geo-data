@@ -3,6 +3,7 @@
 namespace unit;
 
 use Chocofamily\GeoData\Config\Options;
+use Chocofamily\GeoData\DTO\GeoDTO;
 use Chocofamily\GeoData\GeoDataService;
 use Helper\CacheMock;
 use Helper\GeoData\EmptyProvider;
@@ -36,7 +37,7 @@ class GeoDataServiceCest
             MockProvider::class,
         ]);
 
-        $geoData = $geoDataService->getGeoData($this->ipAddress);
+        $geoData = $geoDataService->getGeoDTO($this->ipAddress)->toArray();
         $I->assertEquals([
             'country' => 'mockCountry',
             'city'    => 'mockCity',
@@ -54,41 +55,27 @@ class GeoDataServiceCest
             EmptyProvider::class,
         ]);
 
-        $geoData = $geoDataService->getGeoData($this->ipAddress);
-        $I->assertEmpty($geoData);
-    }
-
-    public function tryToFilterData(\UnitTester $I, \Helper\Unit $helper)
-    {
-        $geoDataService = new GeoDataService($this->config, $this->cache);
-        $helper->invokeProperty($geoDataService, 'geoClasses', [
-            MockProvider::class,
-        ]);
-
-        $geoData = $geoDataService->getGeoData($this->ipAddress, ['country', 'city']);
-        $I->assertEquals([
-            'country' => 'mockCountry',
-            'city'    => 'mockCity',
-        ], $geoData);
+        $geoData = $geoDataService->getGeoDTO($this->ipAddress);
+        $I->assertNull($geoData);
     }
 
     public function tryToGetGeoDataFromCache(\UnitTester $I, \Helper\Unit $helper)
     {
-        $cacheData = [
+        $cacheData = GeoDTO::fromArray([
             'country' => 'cacheCountry',
             'city'    => 'cacheCity',
             'region'  => 'cacheRegion',
             'lat'     => 'cacheLat',
             'lon'     => 'cacheLon',
-        ];
+         ]);
 
-        $this->cache->save(Options::PREFIX_CACHE_KEY.$this->ipAddress, $cacheData);
+        $this->cache->save(Options::PREFIX_CACHE_KEY.$this->ipAddress, serialize($cacheData));
 
         $geoDataService = new GeoDataService($this->config, $this->cache);
         $helper->invokeProperty($geoDataService, 'geoClasses', [
             MockProvider::class,
         ]);
-        $geoData = $geoDataService->getGeoData($this->ipAddress);
+        $geoData = $geoDataService->getGeoDTO($this->ipAddress);
 
         $I->assertEquals($cacheData, $geoData);
     }

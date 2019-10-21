@@ -17,26 +17,23 @@
 ```php
 ...
 $geoDataService = new GeoDataService($this->config, $this->cache);
-$geoData        = $geoDataService->getGeoData($ipAddress);
+/** @var \Chocofamily\GeoData\DTO\GeoDTO $geoData */
+$geoDTO        = $geoDataService->getGeoDTO($ipAddress);
 
-$country = $geoData['country'];
-$city    = $geoData['city'];
-$region  = $geoData['region'];
-$lat     = $geoData['lat'];
-$lon     = $geoData['lon'];
-...
-```
+/** Можно достать данные по-отдельности */
+$country = $geoDTO->country;
+$city    = $geoDTO->city;
 
-Если вы не хотите чтобы возвращались все данные, можете указать нужные вам ключи в виде массива как второй аргумент 
-функции `getGeoData()`:
-
-```php
-...
-$geoDataService = new GeoDataService($this->config, $this->cache);
-$filter         = ['country', 'city'];
-$geoData        = $geoDataService->getGeoData($ipAddress, $filter);
-
-// $geoData будет содержать только ключи country и city
-$authHistoryModel->save($geoData);
+/**
+ * Либо можно достать в виде массива. Пример:
+ * [
+ *      'country' => 'Kazakhstan',
+ *      'city' => 'Almaty',
+ *      'region' => 'ALA',
+ *      'lat' => '12.345',
+ *      'lon' => '12.345',
+ * ]
+ */
+$geoData = $geoDTO->toArray();
 ...
 ```
