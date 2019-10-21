@@ -23,6 +23,9 @@ $geoDTO        = $geoDataService->getGeoDTO($ipAddress);
 /** Можно достать данные по-отдельности */
 $country = $geoDTO->country;
 $city    = $geoDTO->city;
+$region  = $geoDTO->region;
+$lat     = $geoDTO->lat;
+$lon     = $geoDTO->lon;
 
 /**
  * Либо можно достать в виде массива. Пример:
