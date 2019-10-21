@@ -22,7 +22,7 @@ class GeoDataService
     /** @var Config */
     private $config;
 
-    private $geoClasses = [
+    private $geoProviders = [
         IpApi::class,
         SypexGeo::class,
     ];
@@ -36,26 +36,24 @@ class GeoDataService
     /**
      * @param string $ip
      *
-     * @param array  $showOnly
-     *
      * @return GeoDTO|null
      */
     public function getGeoDTO(string $ip): ?GeoDTO
     {
         $key = $this->getCacheKey($ip);
-        if ($geoData = $this->cache->get($key)) {
-            return unserialize($geoData);
+        if ($geoDTO = $this->cache->get($key)) {
+            return unserialize($geoDTO);
         }
 
-        foreach ($this->geoClasses as $geoClass) {
+        foreach ($this->geoProviders as $geoProviderClass) {
             /** @var GeoProviderInterface $geoProvider */
-            $geoProvider = new $geoClass($ip);
+            $geoProvider = new $geoProviderClass($ip);
 
             if ($geoProvider->isAvailable()) {
-                $geoData = $geoProvider->getData();
-                $this->cache->save($key, serialize($geoData), $this->getCacheTime());
+                $geoDTO = $geoProvider->getDTO();
+                $this->cache->save($key, serialize($geoDTO), $this->getCacheTime());
 
-                return $geoData;
+                return $geoDTO;
             }
         }
 
@@ -69,7 +67,7 @@ class GeoDataService
      */
     private function getCacheKey(string $ip): string
     {
-        $prefix = $this->config->get('cache_prefix_key', Options::PREFIX_CACHE_KEY);
+        $prefix = $this->config->get('cache_key_prefix', Options::CACHE_KEY_PREFIX);
 
         return $prefix.$ip;
     }
@@ -80,16 +78,5 @@ class GeoDataService
     private function getCacheTime(): int
     {
         return $this->config->get('cache_time', Options::CACHE_TIME);
-    }
-
-    /**
-     * @param array $geoData
-     * @param array $showOnly
-     *
-     * @return array
-     */
-    private function filter(array $geoData, array $showOnly): array
-    {
-        return array_intersect_key($geoData, array_flip($showOnly));
     }
 }

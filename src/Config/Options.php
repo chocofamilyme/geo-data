@@ -8,7 +8,7 @@ namespace Chocofamily\GeoData\Config;
 
 class Options
 {
-    const PREFIX_CACHE_KEY = 'geo_';
+    const CACHE_KEY_PREFIX = 'geo_';
 
     /**
      * 3 days

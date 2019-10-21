@@ -31,7 +31,7 @@ class EmptyProvider extends AbstractGeoProvider
     /**
      * @return GeoDTO
      */
-    public function getData(): GeoDTO
+    public function getDTO(): GeoDTO
     {
         return GeoDTO::fromArray([]);
     }

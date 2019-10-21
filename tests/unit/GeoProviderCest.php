@@ -21,7 +21,7 @@ class GeoProviderCest
         $ip    = '185.97.113.204';
         $geoProvider = new $data['className']($ip);
 
-        $result = $geoProvider->getData()->toArray();
+        $result = $geoProvider->getDTO()->toArray();
         $I->assertArraySubset([
             'country' => 'Kazakhstan',
             'city'    => 'Almaty',

@@ -18,5 +18,5 @@ interface GeoProviderInterface
     /**
      * @return GeoDTO
      */
-    public function getData(): GeoDTO;
+    public function getDTO(): GeoDTO;
 }

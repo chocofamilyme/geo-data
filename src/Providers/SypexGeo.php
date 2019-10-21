@@ -27,7 +27,7 @@ class SypexGeo extends AbstractGeoProvider
     /**
      * @return GeoDTO
      */
-    public function getData(): GeoDTO
+    public function getDTO(): GeoDTO
     {
         return GeoDTO::fromArray([
             'country' => $this->geoData['country']['name_en'],

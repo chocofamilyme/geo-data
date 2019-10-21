@@ -33,7 +33,7 @@ class GeoDataServiceCest
     public function tryToGetGeoData(\UnitTester $I, \Helper\Unit $helper)
     {
         $geoDataService = new GeoDataService($this->config, $this->cache);
-        $helper->invokeProperty($geoDataService, 'geoClasses', [
+        $helper->invokeProperty($geoDataService, 'geoProviders', [
             MockProvider::class,
         ]);
 
@@ -50,7 +50,7 @@ class GeoDataServiceCest
     public function tryToPassGeoDataIfServiceIsNotAvailable(\UnitTester $I, \Helper\Unit $helper)
     {
         $geoDataService = new GeoDataService($this->config, $this->cache);
-        $helper->invokeProperty($geoDataService, 'geoClasses', [
+        $helper->invokeProperty($geoDataService, 'geoProviders', [
             NullProvider::class,
             EmptyProvider::class,
         ]);
@@ -69,10 +69,10 @@ class GeoDataServiceCest
             'lon'     => 'cacheLon',
          ]);
 
-        $this->cache->save(Options::PREFIX_CACHE_KEY.$this->ipAddress, serialize($cacheData));
+        $this->cache->save(Options::CACHE_KEY_PREFIX.$this->ipAddress, serialize($cacheData));
 
         $geoDataService = new GeoDataService($this->config, $this->cache);
-        $helper->invokeProperty($geoDataService, 'geoClasses', [
+        $helper->invokeProperty($geoDataService, 'geoProviders', [
             MockProvider::class,
         ]);
         $geoData = $geoDataService->getGeoDTO($this->ipAddress);

@@ -28,7 +28,7 @@ class MockProvider extends AbstractGeoProvider
         return false;
     }
 
-    public function getData(): GeoDTO
+    public function getDTO(): GeoDTO
     {
         return GeoDTO::fromArray([
             'country' => 'mockCountry',
