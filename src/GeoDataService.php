@@ -7,6 +7,7 @@
 namespace Chocofamily\GeoData;
 
 use Chocofamily\GeoData\Config\Options;
+use Chocofamily\GeoData\Providers\GeoProviderInterface;
 use Chocofamily\GeoData\Providers\Ip;
 use Chocofamily\GeoData\Providers\Sypex;
 use Phalcon\Cache\BackendInterface;
