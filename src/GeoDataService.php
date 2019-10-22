@@ -11,26 +11,31 @@ use Chocofamily\GeoData\DTO\GeoDTO;
 use Chocofamily\GeoData\Providers\GeoProviderInterface;
 use Chocofamily\GeoData\Providers\IpApi;
 use Chocofamily\GeoData\Providers\SypexGeo;
+use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use Phalcon\Cache\BackendInterface;
-use Phalcon\Config;
 
 class GeoDataService
 {
     /** @var BackendInterface */
     private $cache;
 
-    /** @var Config */
+    /** @var array */
     private $config;
+
+    /** @var ClientInterface */
+    private $httpClient;
 
     private $geoProviders = [
         IpApi::class,
         SypexGeo::class,
     ];
 
-    public function __construct(Config $config, BackendInterface $cache)
+    public function __construct(array $config, BackendInterface $cache, ClientInterface $httpClient = null)
     {
-        $this->cache  = $cache;
-        $this->config = $config;
+        $this->cache      = $cache;
+        $this->config     = $config;
+        $this->httpClient = $httpClient ?? new Client();
     }
 
     /**
@@ -47,9 +52,9 @@ class GeoDataService
 
         foreach ($this->geoProviders as $geoProviderClass) {
             /** @var GeoProviderInterface $geoProvider */
-            $geoProvider = new $geoProviderClass($ip);
+            $geoProvider = new $geoProviderClass($this->httpClient);
 
-            if ($geoProvider->isAvailable()) {
+            if ($geoProvider->requestData($ip)) {
                 $geoDTO = $geoProvider->getDTO();
                 $this->cache->save($key, serialize($geoDTO), $this->getCacheTime());
 
@@ -67,7 +72,7 @@ class GeoDataService
      */
     private function getCacheKey(string $ip): string
     {
-        $prefix = $this->config->get('cache_key_prefix', Options::CACHE_KEY_PREFIX);
+        $prefix = $this->config['cache_key_prefix'] ?? Options::CACHE_KEY_PREFIX;
 
         return $prefix.$ip;
     }
@@ -77,6 +82,6 @@ class GeoDataService
      */
     private function getCacheTime(): int
     {
-        return $this->config->get('cache_time', Options::CACHE_TIME);
+        return $this->config['cache_time'] ?? Options::CACHE_TIME;
     }
 }

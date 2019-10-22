@@ -6,36 +6,50 @@
 
 namespace Chocofamily\GeoData\Providers;
 
-use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 
 abstract class AbstractGeoProvider implements GeoProviderInterface
 {
+    /** @var array */
     protected $geoData;
+
+    /** @var ClientInterface */
+    protected $httpClient;
 
     /**
      * AbstractGeoData constructor.
      *
-     * @param $ipAddress
-     *
-     * @throws \JsonException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @param ClientInterface|null $httpClient
      */
-    public function __construct($ipAddress)
+    public function __construct(ClientInterface $httpClient)
     {
-        $client        = new Client();
-        $response      = $client->request('GET', $this->getServiceLink().$ipAddress);
+        $this->httpClient = $httpClient;
+    }
+
+    /**
+     * @param string $ipAddress
+     *
+     * @return bool
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \JsonException
+     */
+    public function requestData(string $ipAddress): bool
+    {
+        $response      = $this->httpClient->request('GET', $this->getServiceLink().$ipAddress);
         $jsonGeoData   = $response->getBody()->getContents();
         $this->geoData = \json_decode($jsonGeoData, true);
 
         if (\json_last_error() !== JSON_ERROR_NONE) {
             throw new \JsonException(json_last_error_msg());
         }
+
+        return $this->isAvailable();
     }
 
     /**
      * @return bool
      */
-    public function isAvailable(): bool
+    protected function isAvailable(): bool
     {
         return isset($this->geoData) && !empty($this->geoData) && !$this->containsError();
     }

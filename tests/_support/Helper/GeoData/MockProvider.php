@@ -7,9 +7,11 @@ use Chocofamily\GeoData\DTO\GeoDTO;
 
 class MockProvider extends AbstractGeoProvider
 {
-    public function __construct($ipAddress)
+    public function requestData(string $ip): bool
     {
         $this->geoData = 'not empty';
+
+        return $this->isAvailable();
     }
 
     /**

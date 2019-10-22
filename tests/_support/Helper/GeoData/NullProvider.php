@@ -7,9 +7,11 @@ use Chocofamily\GeoData\DTO\GeoDTO;
 
 class NullProvider extends AbstractGeoProvider
 {
-    public function __construct($ipAddress)
+    public function requestData(string $ip): bool
     {
-        $this->geoData = null;
+        $this->geoData = '';
+
+        return $this->isAvailable();
     }
 
     /**

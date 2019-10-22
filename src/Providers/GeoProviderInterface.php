@@ -11,9 +11,11 @@ use Chocofamily\GeoData\DTO\GeoDTO;
 interface GeoProviderInterface
 {
     /**
+     * @param string $ipAddress
+     *
      * @return bool
      */
-    public function isAvailable(): bool;
+    public function requestData(string $ipAddress): bool;
 
     /**
      * @return GeoDTO

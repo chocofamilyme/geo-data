@@ -5,6 +5,7 @@ namespace unit;
 use Chocofamily\GeoData\Config\Options;
 use Chocofamily\GeoData\DTO\GeoDTO;
 use Chocofamily\GeoData\GeoDataService;
+use GuzzleHttp\Client;
 use Helper\CacheMock;
 use Helper\GeoData\EmptyProvider;
 use Helper\GeoData\MockProvider;
@@ -21,7 +22,7 @@ class GeoDataServiceCest
     {
         $this->ipAddress = 'ipAddress';
         $this->cache     = new CacheMock();
-        $this->config    = new Config();
+        $this->config    = [];
     }
 
     /**
@@ -32,7 +33,7 @@ class GeoDataServiceCest
      */
     public function tryToGetGeoData(\UnitTester $I, \Helper\Unit $helper)
     {
-        $geoDataService = new GeoDataService($this->config, $this->cache);
+        $geoDataService = new GeoDataService($this->config, $this->cache, new Client());
         $helper->invokeProperty($geoDataService, 'geoProviders', [
             MockProvider::class,
         ]);

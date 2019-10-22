@@ -2,24 +2,28 @@
 
 namespace unit;
 
+use Chocofamily\GeoData\Providers\GeoProviderInterface;
 use Chocofamily\GeoData\Providers\IpApi;
 use Chocofamily\GeoData\Providers\SypexGeo;
+use GuzzleHttp\Client;
 
 class GeoProviderCest
 {
     /**
      * @dataProvider geoApiProvider
      *
-     * @param \UnitTester $I
+     * @param \UnitTester          $I
      *
-     * @throws \JsonException
+     * @param \Codeception\Example $data
      */
     public function tryToGetData(\UnitTester $I, \Codeception\Example $data)
     {
         $I->wantTo($data['message']);
 
-        $ip    = '185.97.113.204';
-        $geoProvider = new $data['className']($ip);
+        $ip = '185.97.113.204';
+        /** @var GeoProviderInterface $geoProvider */
+        $geoProvider = new $data['className'](new Client());
+        $geoProvider->requestData($ip);
 
         $result = $geoProvider->getDTO()->toArray();
         $I->assertArraySubset([
@@ -33,11 +37,11 @@ class GeoProviderCest
     {
         return [
             [
-                'message' => 'Получить гео данные с IpApi',
+                'message'   => 'Получить гео данные с IpApi',
                 'className' => IpApi::class,
             ],
             [
-                'message' => 'Получить гео данные с SypexGeo',
+                'message'   => 'Получить гео данные с SypexGeo',
                 'className' => SypexGeo::class,
             ],
         ];
