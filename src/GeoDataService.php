@@ -41,9 +41,9 @@ class GeoDataService
     /**
      * @param string $ip
      *
-     * @return GeoDTO|null
+     * @return GeoDTO
      */
-    public function getGeoDTO(string $ip): ?GeoDTO
+    public function getGeoDTO(string $ip): GeoDTO
     {
         $key = $this->getCacheKey($ip);
         if ($geoDTO = $this->cache->get($key)) {
@@ -62,7 +62,7 @@ class GeoDataService
             }
         }
 
-        return null;
+        return new GeoDTO();
     }
 
     /**
