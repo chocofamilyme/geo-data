@@ -57,7 +57,7 @@ class GeoDataServiceCest
         ]);
 
         $geoData = $geoDataService->getGeoDTO($this->ipAddress);
-        $I->assertNull($geoData);
+        $I->assertEquals(new GeoDTO(), $geoData);
     }
 
     public function tryToGetGeoDataFromCache(\UnitTester $I, \Helper\Unit $helper)
